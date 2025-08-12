@@ -10,8 +10,8 @@ Here is a live example of Project Chimera in action. The system was tasked with 
 
 ### Screenshot of the Application
 *Replace this text with a screenshot of your Streamlit UI in action. Show the logs and the final diff view.*
-`![Chimera UI](https://github.com/Umme-2003/Chimera/blob/main/chimera1.png)`
-`![Chimera UI](https://github.com/Umme-2003/Chimera/blob/main/chimera2.png)`
+`![Chimera UI](chimera1.png)`
+`![Chimera UI](chimera2.png)`
 
 ---
 
