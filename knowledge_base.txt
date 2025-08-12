@@ -1,0 +1,17 @@
+SECURITY KNOWLEDGE BASE
+
+Vulnerability Name: Hardcoded Secrets
+
+Risk: High
+
+Description: Hardcoded secrets, such as API keys, passwords, or authentication tokens, are credentials that are written directly into the source code. This is a significant security risk. If the source code is ever exposed, whether through a public repository, a leak, or unauthorized access, these secrets are immediately compromised.
+
+Remediation: Secrets should never be stored in code. They should be loaded from environment variables or a dedicated secrets management service (like AWS Secrets Manager or HashiCorp Vault). This separates the code from the credentials, allowing the code to be shared safely without exposing sensitive information.
+
+Vulnerability Name: SQL Injection
+
+Risk: Critical
+
+Description: SQL Injection occurs when an application uses untrusted user input to construct SQL queries. Typically, this involves using f-strings or string concatenation (+) to build a query string. An attacker can supply specially crafted input that breaks out of the intended query and executes arbitrary commands on the database, potentially leading to data theft, modification, or destruction.
+
+Remediation: Never use string formatting (f-strings, %, +) to build SQL queries with user input. Always use a parameterized query mechanism provided by your database library (e.g., SQLAlchemy, psycopg2). The library will safely handle user input, ensuring it is treated as data and not as executable code. For example, instead of `f"SELECT * FROM users WHERE name = '{user_name}'"`, you should use a placeholder like `text("SELECT * FROM users WHERE name = :name")` and pass the parameters separately.
