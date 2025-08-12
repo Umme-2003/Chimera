@@ -9,8 +9,8 @@ Project Chimera is a sophisticated, multi-agent AI system designed to autonomous
 Here is a live example of Project Chimera in action. The system was tasked with finding and fixing a potential SQL injection vulnerability in the `mjhea0/flask-boilerplate` repository.
 
 ### Screenshot of the Application
-*Replace this text with a screenshot of your Streamlit UI in action. Show the logs and the final diff view.*
 ![Chimera UI](chimera1.png)
+Diff View
 ![Chimera UI](chimera2.png)
 
 
