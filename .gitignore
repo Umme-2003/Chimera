@@ -1,0 +1,49 @@
+# Environment variables and secrets
+# Never commit this file! Use .env.example as template.
+.env
+
+# Python virtual environment
+venv/
+venv_chimera/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# IDE and OS specific files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary cloned repository
+temp_repo/
+
+# Local results folder
+results/
+
+# Streamlit specific files
+.streamlit/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# FAISS vector store cache
+*.faiss
+*.pkl
+
+# Claude config
+.claude/
+
+# Streamlit logs
+streamlit.log
+
+# Test/demo artifacts
+test_repo_demo/

@@ -1,0 +1,66 @@
+stages:
+  - lint
+  - test
+  - security
+
+# ─────────────────────────────────────────────
+# Stage 1: Code Quality
+# ─────────────────────────────────────────────
+lint:
+  stage: lint
+  image: python:3.11-slim
+  before_script:
+    - pip install ruff flake8
+  script:
+    - echo "🔍 Running code quality checks..."
+    - ruff check --select E,W,F,I --ignore E501 . || true
+    - flake8 --max-line-length=120 --ignore=E501,W503 --exclude=venv,temp_repo,__pycache__ . || true
+  allow_failure: true
+
+# ─────────────────────────────────────────────
+# Stage 2: Validation Tests
+# ─────────────────────────────────────────────
+test:python-syntax:
+  stage: test
+  image: python:3.11-slim
+  script:
+    - echo "🐍 Validating Python syntax..."
+    - python -m py_compile chimera.py
+    - python -m py_compile chimera_gitlab.py
+    - python -m py_compile chimera_core.py
+    - python -m py_compile chimera_confidence.py
+    - python -m py_compile chimera_security_debt.py
+    - python -m py_compile chimera_sustainability.py
+    - python -m py_compile app.py
+    - python -m py_compile architect.py
+    - python -m py_compile main.py
+    - echo "✅ All Python files compile successfully"
+
+test:yaml-validation:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - pip install pyyaml
+  script:
+    - echo "📋 Validating YAML configurations..."
+    - python -c "import yaml; yaml.safe_load(open('agents/agent.yml')); print('✅ Agent YAML is valid')"
+    - python -c "import yaml; yaml.safe_load(open('flows/flow.yml')); print('✅ Flow YAML is valid')"
+    - python -c "import yaml; yaml.safe_load(open('.gitlab-ci.yml')); print('✅ CI/CD YAML is valid')"
+  allow_failure: false
+
+test:knowledge-base:
+  stage: test
+  image: python:3.11-slim
+  script:
+    - echo "📚 Validating knowledge base..."
+    - test -f knowledge_base.txt && echo "✅ Knowledge base exists" || (echo "❌ Knowledge base missing" && exit 1)
+    - wc -l knowledge_base.txt
+
+# ─────────────────────────────────────────────
+# Stage 3: Security Scanning
+# ─────────────────────────────────────────────
+sast:
+  stage: security
+
+include:
+  - template: Security/SAST.gitlab-ci.yml

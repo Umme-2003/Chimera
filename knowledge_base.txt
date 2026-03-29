@@ -1,0 +1,71 @@
+SECURITY KNOWLEDGE BASE — Project Chimera
+
+═══════════════════════════════════════════════════════════════
+
+Vulnerability Name: Hardcoded Secrets
+
+Risk: High
+
+Description: Hardcoded secrets, such as API keys, passwords, or authentication tokens, are credentials that are written directly into the source code. This is a significant security risk. If the source code is ever exposed, whether through a public repository, a leak, or unauthorized access, these secrets are immediately compromised.
+
+Remediation: Secrets should never be stored in code. They should be loaded from environment variables or a dedicated secrets management service (like AWS Secrets Manager or HashiCorp Vault). This separates the code from the credentials, allowing the code to be shared safely without exposing sensitive information.
+
+═══════════════════════════════════════════════════════════════
+
+Vulnerability Name: SQL Injection
+
+Risk: Critical
+
+Description: SQL Injection occurs when an application uses untrusted user input to construct SQL queries. Typically, this involves using f-strings or string concatenation (+) to build a query string. An attacker can supply specially crafted input that breaks out of the intended query and executes arbitrary commands on the database, potentially leading to data theft, modification, or destruction.
+
+Remediation: Never use string formatting (f-strings, %, +) to build SQL queries with user input. Always use a parameterized query mechanism provided by your database library (e.g., SQLAlchemy, psycopg2). The library will safely handle user input, ensuring it is treated as data and not as executable code. For example, instead of `f"SELECT * FROM users WHERE name = '{user_name}'"`, you should use a placeholder like `text("SELECT * FROM users WHERE name = :name")` and pass the parameters separately.
+
+═══════════════════════════════════════════════════════════════
+
+Vulnerability Name: Cross-Site Scripting (XSS)
+
+Risk: High
+
+Description: Cross-Site Scripting (XSS) occurs when an application includes user-supplied data in web pages without proper sanitization or encoding. An attacker can inject malicious scripts (typically JavaScript) that execute in the context of other users' browsers. This can lead to session hijacking, cookie theft, defacement, or redirection to malicious sites. There are three types: Stored XSS (persisted in database), Reflected XSS (reflected from URL/input), and DOM-based XSS (client-side manipulation).
+
+Remediation: Always sanitize and encode user input before rendering it in HTML. Use templating engines with automatic escaping (e.g., Jinja2's autoescape). Apply Content Security Policy (CSP) headers. Never use innerHTML or dangerouslySetInnerHTML with user-controlled data. Use libraries like bleach or DOMPurify to sanitize HTML content.
+
+═══════════════════════════════════════════════════════════════
+
+Vulnerability Name: Path Traversal
+
+Risk: Medium
+
+Description: Path Traversal (also known as Directory Traversal) occurs when user-supplied input is used to construct file paths without validation. An attacker can use sequences like "../" to navigate outside the intended directory, potentially accessing sensitive system files (e.g., /etc/passwd), configuration files, or other application data. This is common in file download/upload features and template loading.
+
+Remediation: Never use raw user input in file paths. Use os.path.basename() to strip directory components. Validate that the resolved absolute path starts with the expected base directory using os.path.abspath(). Use allowlists for permitted filenames when possible. Avoid os.path.join() with user-controlled path segments.
+
+═══════════════════════════════════════════════════════════════
+
+Vulnerability Name: Insecure Deserialization
+
+Risk: Critical
+
+Description: Insecure Deserialization occurs when an application deserializes (converts from stored/transmitted format back to an object) untrusted data without proper validation. In Python, this commonly involves pickle.loads() or yaml.load() with untrusted input. An attacker can craft malicious serialized objects that execute arbitrary code when deserialized, potentially leading to remote code execution (RCE).
+
+Remediation: Never deserialize untrusted data using pickle, marshal, or yaml.load(). Use yaml.safe_load() instead of yaml.load(). Prefer JSON for data interchange as it cannot encode executable objects. If pickle is necessary, implement HMAC-based signing to verify data integrity before deserialization.
+
+═══════════════════════════════════════════════════════════════
+
+Vulnerability Name: Weak Cryptography
+
+Risk: Medium
+
+Description: Weak Cryptography refers to the use of outdated or insufficient cryptographic algorithms and practices. This includes using MD5 or SHA-1 for password hashing (both are fast and vulnerable to brute-force), hardcoded encryption keys or initialization vectors (IVs), use of ECB mode for block ciphers, or insufficient key lengths. These weaknesses can be exploited to crack passwords, decrypt sensitive data, or forge authentication tokens.
+
+Remediation: Use strong, purpose-built algorithms: bcrypt, scrypt, or Argon2 for password hashing. Use AES-256 with GCM mode for symmetric encryption. Use RSA with at least 2048-bit keys or Ed25519 for asymmetric operations. Never hardcode keys or IVs — generate them using os.urandom() or secrets module. Always use the cryptography library rather than implementing crypto from scratch.
+
+═══════════════════════════════════════════════════════════════
+
+Vulnerability Name: Missing Input Validation
+
+Risk: Medium
+
+Description: Missing Input Validation occurs when an application accepts user input without checking it against expected formats, lengths, types, or ranges. This is often the root cause of many other vulnerabilities (SQL injection, XSS, buffer overflows). Without validation, attackers can submit unexpected data that causes application errors, data corruption, or security breaches.
+
+Remediation: Implement strict input validation at every entry point. Use allowlists (whitelist) over blocklists (blacklist). Validate data types, lengths, ranges, and formats. Use schema validation libraries (e.g., Pydantic, marshmallow, cerberus). Apply the principle of least privilege — reject any input that doesn't match expected patterns.
